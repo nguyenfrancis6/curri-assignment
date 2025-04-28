@@ -1,0 +1,44 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                        Int        @id @default(autoincrement())
+  firstName                 String     @map("first_name")
+  lastName                  String     @map("last_name")
+  emailAddress              String     @map("email_address")
+  deliveries                Delivery[]
+
+  @@map("users")
+}
+
+model Delivery {
+  id                   Int     @id @default(autoincrement())
+  originAddressId      Int     @map("origin_address_id")
+  originAddress        Address @relation(name: "OriginAddress", fields: [originAddressId], references: [id])
+  destinationAddressId Int     @map("destination_address_id")
+  destinationAddress   Address @relation(name: "DestinationAddress", fields: [destinationAddressId], references: [id])
+  orderNumber          String  @map("order_number")
+  user                 User?   @relation(fields: [userId], references: [id])
+  userId               Int?    @map("user_id")
+
+  @@map("deliveries")
+}
+
+model Address {
+  id                    Int        @id @default(autoincrement())
+  addressLine1          String     @map("address_line_1")
+  addressLine2          String     @map("address_line_2")
+  city                  String
+  state                 String
+  postalCode            String     @map("postal_code")
+  originDeliveries      Delivery[] @relation("OriginAddress")
+  destinationDeliveries Delivery[] @relation("DestinationAddress")
+
+  @@map("addresses")
+}

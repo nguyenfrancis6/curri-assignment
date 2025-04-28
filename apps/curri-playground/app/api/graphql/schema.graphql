@@ -1,0 +1,46 @@
+type User {
+  firstName: String
+  lastName: String
+  emailAddress: String
+  id: Int
+}
+
+type Query {
+  user(id: Int): User
+  deliveries(userId: Int): [Delivery]
+}
+
+type Address {
+  id: Int!
+  addressLine1: String!
+  city: String!
+  state: String!
+  postalCode: String!
+}
+
+type Delivery {
+  id: Int
+  originAddress: Address
+  destinationAddress: Address
+  createdAt: String
+  orderNumber: String
+  vehicle: String
+}
+
+input AddressInput {
+  addressLine1: String!
+  city: String!
+  state: String!
+  postalCode: String!
+}
+
+input BookDeliveryInput {
+  originAddress: AddressInput!
+  destinationAddress: AddressInput!
+  orderNumber: String
+  vehicle: String!
+}
+
+type Mutation {
+  bookDelivery(data: BookDeliveryInput!): Delivery
+}

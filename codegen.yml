@@ -1,0 +1,12 @@
+overwrite: true
+schema: './apps/curri-playground/app/api/graphql/schema.graphql'
+documents: '**/*.graphql'
+generates:
+  ./apps/curri-playground/app/_graphql-generated/index.ts:
+    config:
+      withHooks: true
+    plugins:
+      - 'typescript'
+      - 'typescript-operations'
+      - 'typescript-resolvers'
+      - 'typescript-react-apollo'

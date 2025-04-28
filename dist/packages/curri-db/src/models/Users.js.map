@@ -1,0 +1,1 @@
+{"version":3,"file":"Users.js","sourceRoot":"","sources":["../../../../../packages/curri-db/src/models/Users.ts"],"names":[],"mappings":";;;;AAAA,8CAAwC;AAEjC,MAAM,YAAY,GAAG,CAAO,EAAC,EAAE,EAAe,EAAE,EAAE;IACrD,MAAM,IAAI,GAAG,MAAM,iBAAM,CAAC,IAAI,CAAC,SAAS,CAAC;QACrC,KAAK,EAAE;YACH,EAAE;SACL;KACJ,CAAC,CAAA;IAEF,OAAO,IAAI,CAAA;AACf,CAAC,CAAA,CAAA;AARY,QAAA,YAAY,gBAQxB"}

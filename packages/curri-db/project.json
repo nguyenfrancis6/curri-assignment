@@ -1,0 +1,59 @@
+{
+  "name": "curri-db",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/curri-db/src",
+  "projectType": "library",
+  "targets": {
+    "db:migrate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "prisma migrate dev",
+        "cwd": "packages/curri-db"
+      },
+      "outputs": ["{projectRoot}/node_modules/.prisma/client"]
+    },
+    "db:seed-user": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "ts-node ./data-migrations/seed-user.ts",
+        "cwd": "packages/curri-db"
+      }
+    },
+    "db:refresh": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "prisma migrate reset --force && prisma migrate dev",
+        "cwd": "packages/curri-db"
+      }
+    },
+    "generate-types": {
+      "command": "prisma generate",
+      "options": {
+        "cwd": "packages/curri-db"
+      },
+      "outputs": ["{projectRoot}/node_modules/.prisma/client"]
+    },
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/packages/curri-db",
+        "main": "packages/curri-db/src/index.ts",
+        "tsConfig": "packages/curri-db/tsconfig.lib.json",
+        "assets": ["packages/curri-db/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"]
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "packages/curri-db/jest.config.ts"
+      }
+    }
+  },
+  "tags": []
+}

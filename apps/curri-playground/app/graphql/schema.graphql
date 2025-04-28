@@ -1,0 +1,14 @@
+mutation bookDelivery($data: BookDeliveryInput!) {
+    bookDelivery(data: $data) {
+        id
+    }
+}
+
+query user($id: Int) {
+    user(id: $id) {
+        id
+        firstName
+        lastName
+        emailAddress
+    }
+}

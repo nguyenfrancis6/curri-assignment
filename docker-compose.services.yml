@@ -1,0 +1,53 @@
+# This is a lightweight, fast, and efficient composition for the essential database services Curri uses.
+# It's meant for the local dev environment, of course. This assumes that you're not load testing.
+#
+# How to use?
+#
+# Perform these commands from the root folder.
+# To start:
+# docker compose -f docker-compose.services.yml up
+#
+# To stop:
+# docker compose -f docker-compose.services.yml down
+#
+# There are NPM script equivalents as well (defined in ./package.json).
+# npm run docker-compose:services:up
+# npm run docker-compose:services:down
+
+services:
+  # Postgres Service
+  curri_interview_template_postgres:
+    container_name: curri_interview_template_postgres
+    hostname: curri_interview_template_postgres
+    image: curri_interview_template_postgres
+    # Had to add this to avoid "could not resize shared memory segment: No space left on device" error
+    shm_size: 1gb
+    build:
+      context: packages/curri-db
+      dockerfile: Dockerfile
+    pull_policy: never
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+    volumes:
+      - curri_interview_template_postgres:/var/lib/postgresql/data
+    ports:
+      - '1132:5432'
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+
+volumes:
+  curri_interview_template_postgres:
+    name: curri_interview_template_postgres
+networks:
+  default:
+    attachable: true
+    driver: bridge
+    driver_opts:
+      # MTU value to be used by the local Docker network (specific to this Docker compose).
+      # This controls the size of the packets sent over the network and can drastically impact performance.
+      #
+      # Larger packets must be chopped up into smaller packets in order to fit inside the transport "pipe", so the largest value which doesn't get chopped up is ideal.
+      # When considering packet size, you also need to keep in mind the size of the header for each packet.
+      com.docker.network.driver.mtu: 1450

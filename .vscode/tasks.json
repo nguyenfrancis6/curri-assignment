@@ -1,0 +1,72 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "boot",
+        "icon": {
+            "id": "vm-connect",
+            "color": "terminal.ansiGreen"
+        },
+        "dependsOn": [
+            "docker:up",
+            "db:generate",
+            "watch:graphql",
+            "app",
+        ]
+      },
+      {
+        "label": "docker:up",
+        "icon": {
+            "id": "database",
+            "color": "terminal.ansiCyan"
+        },
+        "type": "shell",
+        "command": "pnpm run docker-compose:services:up"
+      },
+      {
+        "label": "docker:down",
+        "icon": {
+            "id": "database",
+            "color": "terminal.ansiRed"
+        },
+        "type": "shell",
+        "command": "pnpm run docker-compose:services:down"
+      },
+      {
+        "label": "db:generate",
+        "icon": {
+            "id": "array",
+            "color": "terminal.ansiBlue"
+        },
+        "type": "shell",
+        "command": "pnpm nx generate-types curri-db"
+      },
+      {
+        "label": "seed",
+        "icon": {
+            "id": "person",
+            "color": "terminal.ansiBlue"
+        },
+        "type": "shell",
+        "command": "pnpm nx db:seed-user curri-db"
+      },
+      {
+        "label": "watch:graphql",
+        "icon": {
+            "id": "watch",
+            "color": "terminal.ansiBlack"
+        },
+        "type": "shell",
+        "command": "pnpm run generate-graphql-types"
+      },
+      {
+        "label": "app",
+        "icon": {
+            "id": "screen-full",
+            "color": "terminal.ansiMagenta"
+        },
+        "type": "shell",
+        "command": "pnpm nx serve curri-playground"
+      },
+    ]
+  }
