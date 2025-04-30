@@ -12,9 +12,8 @@ const typeDefs = readFileSync('./app/api/graphql/schema.graphql', {
 })
 
 const isValidFormat = (format: string): boolean => {
-  if (format.length > 10) return false
+  if (format.length > 15) return false
   if (format.startsWith('-') || format.endsWith('-')) return false
-  if (format.includes('--')) return false
   return true
 }
 

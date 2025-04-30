@@ -2,42 +2,79 @@
 
 import { Button, Checkbox, Modal, TextInput } from '@mantine/core'
 import { useEffect, useState } from 'react'
-import { UserQuery } from '../_graphql-generated'
+import {
+  UserQuery,
+  useUpdateOrderNumberFormatMutation,
+} from '../_graphql-generated'
+import { IconX } from '@tabler/icons-react'
 
 type UserSettingsModalProps = {
-    isOpen: boolean
-    close: () => void
-    user?: UserQuery['user']
+  isOpen: boolean
+  close: () => void
+  user?: UserQuery['user']
 }
 
-export const UserSettingsModal = ({ isOpen, close, user }: UserSettingsModalProps) => {
-  const [orderNumberRestrictions, setOrderNumberRestrictions] = useState<string>()
+export const UserSettingsModal = ({
+  isOpen,
+  close,
+  user,
+}: UserSettingsModalProps) => {
+  const [orderNumberRestrictions, setOrderNumberRestrictions] =
+    useState<string>('')
+  const [updateFormat] = useUpdateOrderNumberFormatMutation()
+
+  const addToFormat = (symbol: string) => {
+    setOrderNumberRestrictions(prev => prev + symbol)
+  }
 
   return (
     <Modal opened={isOpen} onClose={close}>
-        <h1 style={{marginTop: '0px'}}>User Settings</h1>
-        <hr />
-        <TextInput
-            size="lg"
-            label="Order number restrictions"
-            value={orderNumberRestrictions}
-            onChange={(e) => {
-              setOrderNumberRestrictions(e.target.value)
-            }}
-            style={{marginBottom: '20px'}}
-        />
-        <Checkbox label='Order number required?'/>
+      <h1 style={{ marginTop: '0px' }}>User Settings</h1>
+      <hr />
+      <TextInput
+        size="lg"
+        label="Order number Format"
+        value={orderNumberRestrictions}
+        placeholder='Ex. "XX-1234-XX"'
+        onChange={() => {}}
+        rightSection={
+          <IconX
+            size={18}
+            style={{ cursor: 'pointer', color: 'gray' }}
+            onClick={() => setOrderNumberRestrictions('')} // Clears the entire field
+          />
+        }
+        style={{ marginBottom: '20px' }}
+        readOnly={true}
+      />
+      <div style={{ display: 'flex', gap: '10px', marginBottom: '12px' }}>
+        <Button onClick={() => addToFormat('#')}>Number</Button>
+        <Button onClick={() => addToFormat('X')}>Letter</Button>
+        <Button onClick={() => addToFormat('-')}>Dash</Button>
+        <Button
+          variant="filled"
+          color="red"
+          size="sm"
+          onClick={() => {
+            setOrderNumberRestrictions(prev => prev.slice(0, prev.length - 1)) // Removes the last character
+          }}
+        >
+          Del
+        </Button>
+      </div>
 
-        <div style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginTop: '16px'
-        }}>
-            <Button color='black'>Cancel</Button>
-            <Button>Update</Button>
-        </div>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginTop: '16px',
+        }}
+      >
+        <Button color="black">Cancel</Button>
+        <Button>Update</Button>
+      </div>
     </Modal>
   )
 }
