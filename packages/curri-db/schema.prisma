@@ -8,11 +8,12 @@ datasource db {
 }
 
 model User {
-  id                        Int        @id @default(autoincrement())
-  firstName                 String     @map("first_name")
-  lastName                  String     @map("last_name")
-  emailAddress              String     @map("email_address")
-  deliveries                Delivery[]
+  id                Int        @id @default(autoincrement())
+  firstName         String     @map("first_name")
+  lastName          String     @map("last_name")
+  emailAddress      String     @map("email_address")
+  orderNumberFormat Json?      @map("order_number_format")
+  deliveries        Delivery[]
 
   @@map("users")
 }
