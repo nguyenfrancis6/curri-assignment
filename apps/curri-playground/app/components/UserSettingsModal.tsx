@@ -7,6 +7,7 @@ import {
   useUpdateOrderNumberFormatMutation,
 } from '../_graphql-generated'
 import { IconX } from '@tabler/icons-react'
+import { toast } from 'react-toastify'
 
 type UserSettingsModalProps = {
   isOpen: boolean
@@ -23,9 +24,17 @@ export const UserSettingsModal = ({
     useState<string>('')
   const [updateFormat] = useUpdateOrderNumberFormatMutation()
 
+  useEffect(() => {
+    if (isOpen && user?.orderNumberFormat) {
+      setOrderNumberRestrictions(user.orderNumberFormat)
+    }
+  }, [isOpen, user?.orderNumberFormat])
+
   const addToFormat = (symbol: string) => {
     setOrderNumberRestrictions(prev => prev + symbol)
   }
+
+  const [formatError, setFormatError] = useState<string | null>(null)
 
   return (
     <Modal opened={isOpen} onClose={close}>
@@ -47,6 +56,18 @@ export const UserSettingsModal = ({
         style={{ marginBottom: '20px' }}
         readOnly={true}
       />
+      {formatError && (
+        <div
+          style={{
+            color: 'red',
+            fontSize: '14px',
+            marginTop: '-12px',
+            marginBottom: '10px',
+          }}
+        >
+          {formatError}
+        </div>
+      )}
       <div style={{ display: 'flex', gap: '10px', marginBottom: '12px' }}>
         <Button onClick={() => addToFormat('#')}>Number</Button>
         <Button onClick={() => addToFormat('X')}>Letter</Button>
@@ -72,8 +93,39 @@ export const UserSettingsModal = ({
           marginTop: '16px',
         }}
       >
-        <Button color="black">Cancel</Button>
-        <Button>Update</Button>
+        <Button color="black" onClick={() => close()}>Cancel</Button>
+        <Button
+          onClick={async () => {
+            if (orderNumberRestrictions.length > 15) {
+              setFormatError('Format must be 15 characters or less.')
+              return
+            }
+            if (
+              orderNumberRestrictions.startsWith('-') ||
+              orderNumberRestrictions.endsWith('-')
+            ) {
+              setFormatError('Dash cannot be at the start or end.')
+              return
+            }
+            try {
+              await updateFormat({
+                variables: {
+                  data: {
+                    userId: user?.id!,
+                    format: orderNumberRestrictions,
+                  },
+                },
+              })
+              setFormatError(null)
+              toast.success('Order number format updated successfully!')
+              close() // optionally close the modal
+            } catch (error) {
+              setFormatError('Failed to update format. Please try again.')
+            }
+          }}
+        >
+          Update
+        </Button>
       </div>
     </Modal>
   )
