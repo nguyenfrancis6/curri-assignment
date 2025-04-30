@@ -55,11 +55,17 @@ export type Delivery = {
 export type Mutation = {
   __typename?: 'Mutation';
   bookDelivery?: Maybe<Delivery>;
+  updateOrderNumberFormat?: Maybe<User>;
 };
 
 
 export type MutationBookDeliveryArgs = {
   data: BookDeliveryInput;
+};
+
+
+export type MutationUpdateOrderNumberFormatArgs = {
+  data: UpdateOrderNumberFormatInput;
 };
 
 export type Query = {
@@ -78,12 +84,18 @@ export type QueryUserArgs = {
   id?: InputMaybe<Scalars['Int']['input']>;
 };
 
+export type UpdateOrderNumberFormatInput = {
+  format: Scalars['String']['input'];
+  userId: Scalars['Int']['input'];
+};
+
 export type User = {
   __typename?: 'User';
   emailAddress?: Maybe<Scalars['String']['output']>;
   firstName?: Maybe<Scalars['String']['output']>;
   id?: Maybe<Scalars['Int']['output']>;
   lastName?: Maybe<Scalars['String']['output']>;
+  orderNumberFormat?: Maybe<Scalars['String']['output']>;
 };
 
 export type BookDeliveryMutationVariables = Exact<{
@@ -93,12 +105,19 @@ export type BookDeliveryMutationVariables = Exact<{
 
 export type BookDeliveryMutation = { __typename?: 'Mutation', bookDelivery?: { __typename?: 'Delivery', id?: number | null } | null };
 
+export type UpdateOrderNumberFormatMutationVariables = Exact<{
+  data: UpdateOrderNumberFormatInput;
+}>;
+
+
+export type UpdateOrderNumberFormatMutation = { __typename?: 'Mutation', updateOrderNumberFormat?: { __typename?: 'User', id?: number | null, orderNumberFormat?: string | null } | null };
+
 export type UserQueryVariables = Exact<{
   id?: InputMaybe<Scalars['Int']['input']>;
 }>;
 
 
-export type UserQuery = { __typename?: 'Query', user?: { __typename?: 'User', id?: number | null, firstName?: string | null, lastName?: string | null, emailAddress?: string | null } | null };
+export type UserQuery = { __typename?: 'Query', user?: { __typename?: 'User', id?: number | null, firstName?: string | null, lastName?: string | null, emailAddress?: string | null, orderNumberFormat?: string | null } | null };
 
 
 
@@ -180,6 +199,7 @@ export type ResolversTypes = {
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
+  UpdateOrderNumberFormatInput: UpdateOrderNumberFormatInput;
   User: ResolverTypeWrapper<User>;
 };
 
@@ -194,6 +214,7 @@ export type ResolversParentTypes = {
   Mutation: {};
   Query: {};
   String: Scalars['String']['output'];
+  UpdateOrderNumberFormatInput: UpdateOrderNumberFormatInput;
   User: User;
 };
 
@@ -218,6 +239,7 @@ export type DeliveryResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   bookDelivery?: Resolver<Maybe<ResolversTypes['Delivery']>, ParentType, ContextType, RequireFields<MutationBookDeliveryArgs, 'data'>>;
+  updateOrderNumberFormat?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationUpdateOrderNumberFormatArgs, 'data'>>;
 };
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
@@ -230,6 +252,7 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   firstName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   id?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
   lastName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  orderNumberFormat?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 };
 
@@ -276,6 +299,40 @@ export function useBookDeliveryMutation(baseOptions?: Apollo.MutationHookOptions
 export type BookDeliveryMutationHookResult = ReturnType<typeof useBookDeliveryMutation>;
 export type BookDeliveryMutationResult = Apollo.MutationResult<BookDeliveryMutation>;
 export type BookDeliveryMutationOptions = Apollo.BaseMutationOptions<BookDeliveryMutation, BookDeliveryMutationVariables>;
+export const UpdateOrderNumberFormatDocument = gql`
+    mutation updateOrderNumberFormat($data: UpdateOrderNumberFormatInput!) {
+  updateOrderNumberFormat(data: $data) {
+    id
+    orderNumberFormat
+  }
+}
+    `;
+export type UpdateOrderNumberFormatMutationFn = Apollo.MutationFunction<UpdateOrderNumberFormatMutation, UpdateOrderNumberFormatMutationVariables>;
+
+/**
+ * __useUpdateOrderNumberFormatMutation__
+ *
+ * To run a mutation, you first call `useUpdateOrderNumberFormatMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateOrderNumberFormatMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateOrderNumberFormatMutation, { data, loading, error }] = useUpdateOrderNumberFormatMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useUpdateOrderNumberFormatMutation(baseOptions?: Apollo.MutationHookOptions<UpdateOrderNumberFormatMutation, UpdateOrderNumberFormatMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateOrderNumberFormatMutation, UpdateOrderNumberFormatMutationVariables>(UpdateOrderNumberFormatDocument, options);
+      }
+export type UpdateOrderNumberFormatMutationHookResult = ReturnType<typeof useUpdateOrderNumberFormatMutation>;
+export type UpdateOrderNumberFormatMutationResult = Apollo.MutationResult<UpdateOrderNumberFormatMutation>;
+export type UpdateOrderNumberFormatMutationOptions = Apollo.BaseMutationOptions<UpdateOrderNumberFormatMutation, UpdateOrderNumberFormatMutationVariables>;
 export const UserDocument = gql`
     query user($id: Int) {
   user(id: $id) {
@@ -283,6 +340,7 @@ export const UserDocument = gql`
     firstName
     lastName
     emailAddress
+    orderNumberFormat
   }
 }
     `;

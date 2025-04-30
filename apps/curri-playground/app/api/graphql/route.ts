@@ -11,6 +11,13 @@ const typeDefs = readFileSync('./app/api/graphql/schema.graphql', {
   encoding: 'utf-8',
 })
 
+const isValidFormat = (format: string): boolean => {
+  if (format.length > 10) return false
+  if (format.startsWith('-') || format.endsWith('-')) return false
+  if (format.includes('--')) return false
+  return true
+}
+
 const resolvers: Resolvers = {
   Query: {
     user: () => {
@@ -47,6 +54,20 @@ const resolvers: Resolvers = {
         originAddress,
         destinationAddress,
       }
+    },
+    updateOrderNumberFormat: async (_, { data }) => {
+      const { userId, format } = data
+
+      if (!isValidFormat(format)) {
+        throw new Error('Invalid format: must be ≤10 characters, no hyphens at start/end, and no consecutive hyphens.')
+      }
+
+      const updatedUser = await Models.Users.updateOrderNumberFormat({
+        userId,
+        format,
+      })
+
+      return updatedUser
     },
   },
 }

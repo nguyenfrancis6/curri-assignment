@@ -12,7 +12,7 @@ model User {
   firstName         String     @map("first_name")
   lastName          String     @map("last_name")
   emailAddress      String     @map("email_address")
-  orderNumberFormat String?      @map("order_number_format")
+  orderNumberFormat String?    @map("order_number_format")
   deliveries        Delivery[]
 
   @@map("users")
