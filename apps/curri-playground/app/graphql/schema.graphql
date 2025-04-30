@@ -4,11 +4,19 @@ mutation bookDelivery($data: BookDeliveryInput!) {
     }
 }
 
+mutation updateOrderNumberFormat($data: UpdateOrderNumberFormatInput!) {
+    updateOrderNumberFormat(data: $data) {
+        id
+        orderNumberFormat
+    }
+}
+
 query user($id: Int) {
     user(id: $id) {
         id
         firstName
         lastName
         emailAddress
+        orderNumberFormat
     }
 }

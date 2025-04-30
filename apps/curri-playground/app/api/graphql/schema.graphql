@@ -3,6 +3,7 @@ type User {
   lastName: String
   emailAddress: String
   id: Int
+  orderNumberFormat: String
 }
 
 type Query {
@@ -41,6 +42,12 @@ input BookDeliveryInput {
   vehicle: String!
 }
 
+input UpdateOrderNumberFormatInput {
+  userId: Int!
+  format: String!  # The format will now be a string
+}
+
 type Mutation {
   bookDelivery(data: BookDeliveryInput!): Delivery
+  updateOrderNumberFormat(data: UpdateOrderNumberFormatInput!): User
 }

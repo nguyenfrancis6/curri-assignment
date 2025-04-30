@@ -9,3 +9,19 @@ export const findByUserId = async ({id}: {id: number}) => {
 
     return user
 } 
+
+export const updateOrderNumberFormat = async ({
+    userId,
+    format,
+  }: {
+    userId: number
+    format: string
+  }) => {
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: {
+        orderNumberFormat: format,
+      },
+    })
+    return user
+  }
