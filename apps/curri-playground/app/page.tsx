@@ -315,6 +315,13 @@ export default function Index() {
             }}
           />
         </SimpleGrid>
+        <div style={{ marginTop: '4px', fontSize: '14px', color: '#666' }}>
+            {userData?.user?.orderNumberFormat ? (
+              <>Format: <strong>{userData.user.orderNumberFormat}</strong></>
+            ) : (
+              <>No format defined yet. <span style={{ color: '#007aff', cursor: 'pointer' }} onClick={() => setUserSettingsModalOpen(true)}>Click here to set one.</span></>
+            )}
+          </div>
         <Space h="xl" />
         <h2>
           <IconSquareNumber3
