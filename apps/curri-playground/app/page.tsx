@@ -22,6 +22,19 @@ import { useEffect, useState } from 'react'
 import { useBookDeliveryMutation, useUserQuery } from './_graphql-generated'
 import { UserSettingsModal } from './components/UserSettingsModal'
 
+function formatToRegex(format: string): RegExp {
+  const escaped = format
+    .split('')
+    .map(char => {
+      if (char === 'X') return '[A-Za-z]'
+      if (char === '#') return '\\d'
+      if (char === '-') return '-'
+      return '' // ignore unsupported chars
+    })
+    .join('')
+  return new RegExp(`^${escaped}$`)
+}
+
 const EMPTY_FORM = {
   initialValues: {
     originAddressInputString: '',
@@ -126,6 +139,7 @@ export default function Index() {
   const [originInputFocused, setOriginInputFocused] = useState(false)
   const [destinationInputFocused, setDestinationInputFocused] = useState(false)
   const [userSettingsModalOpen, setUserSettingsModalOpen] = useState(false)
+  const [orderNumberError, setOrderNumberError] = useState<string | null>(null)
   const geocodeOriginAddress = useGeocodeAddress('')
   const geocodeDestinationAddress = useGeocodeAddress('')
 
@@ -140,6 +154,24 @@ export default function Index() {
       form.values.destinationAddressInputString
     )
   }, [form.values.destinationAddressInputString])
+
+  useEffect(() => {
+    if (!userData?.user?.orderNumberFormat || !form.values.orderNumber) {
+      setOrderNumberError(null)
+      return
+    }
+  
+    const regex = formatToRegex(userData.user.orderNumberFormat)
+    const isValid = regex.test(form.values.orderNumber)
+  
+    if (!isValid) {
+      setOrderNumberError(
+        `Order number must match the format: ${userData.user.orderNumberFormat}`
+      )
+    } else {
+      setOrderNumberError(null)
+    }
+  }, [form.values.orderNumber, userData?.user?.orderNumberFormat])
 
   // @ts-ignore
   const handleBodyClick = e => {
@@ -321,7 +353,12 @@ export default function Index() {
             ) : (
               <>No format defined yet. <span style={{ color: '#007aff', cursor: 'pointer' }} onClick={() => setUserSettingsModalOpen(true)}>Click here to set one.</span></>
             )}
+        </div>
+        {orderNumberError && (
+          <div style={{ color: 'red', fontSize: '14px', marginTop: '4px' }}>
+            {orderNumberError}
           </div>
+        )}
         <Space h="xl" />
         <h2>
           <IconSquareNumber3
@@ -350,7 +387,8 @@ export default function Index() {
           disabled={!form.values.destinationAddress.addressLine1 || 
                     !form.values.originAddress.addressLine1 || 
                     !form.values.vehicle || 
-                    !form.values.orderNumber
+                    !form.values.orderNumber ||
+                    !!orderNumberError
                   }
           onClick={async () => {
             await bookDeliveryMutation({
