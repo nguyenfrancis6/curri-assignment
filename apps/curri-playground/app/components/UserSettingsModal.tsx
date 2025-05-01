@@ -22,11 +22,13 @@ export const UserSettingsModal = ({
 }: UserSettingsModalProps) => {
   const [orderNumberRestrictions, setOrderNumberRestrictions] =
     useState<string>('')
+  const [formatError, setFormatError] = useState<string | null>(null)
   const [updateFormat] = useUpdateOrderNumberFormatMutation()
 
   useEffect(() => {
-    if (isOpen && user?.orderNumberFormat) {
-      setOrderNumberRestrictions(user.orderNumberFormat)
+    if (isOpen) {
+      // Prefill with the user's format or fallback to an empty string for new users
+      setOrderNumberRestrictions(user?.orderNumberFormat || '')
     }
   }, [isOpen, user?.orderNumberFormat])
 
@@ -34,7 +36,38 @@ export const UserSettingsModal = ({
     setOrderNumberRestrictions(prev => prev + symbol)
   }
 
-  const [formatError, setFormatError] = useState<string | null>(null)
+  const handleUpdate = async () => {
+    if (orderNumberRestrictions.length > 15) {
+      setFormatError('Format must be 15 characters or less.')
+      return
+    }
+    if (
+      orderNumberRestrictions.startsWith('-') ||
+      orderNumberRestrictions.endsWith('-')
+    ) {
+      setFormatError('Dash cannot be at the start or end.')
+      return
+    }
+  
+    try {
+      await updateFormat({
+        variables: {
+          data: {
+            userId: user?.id!,
+            format: orderNumberRestrictions,
+          },
+        },
+      })
+      setFormatError(null)
+      toast.success('Order number format updated successfully!')
+      close()
+    } catch (error) {
+      setFormatError('Failed to update format. Please try again.')
+    }
+  }
+  
+
+  
 
   return (
     <Modal opened={isOpen} onClose={close}>
@@ -44,7 +77,7 @@ export const UserSettingsModal = ({
         size="lg"
         label="Order number Format"
         value={orderNumberRestrictions}
-        placeholder='Ex. "XX-1234-XX"'
+        placeholder='Ex. "XX-####-XX"'
         onChange={() => {}}
         rightSection={
           <IconX
@@ -95,34 +128,8 @@ export const UserSettingsModal = ({
       >
         <Button color="black" onClick={() => close()}>Cancel</Button>
         <Button
-          onClick={async () => {
-            if (orderNumberRestrictions.length > 15) {
-              setFormatError('Format must be 15 characters or less.')
-              return
-            }
-            if (
-              orderNumberRestrictions.startsWith('-') ||
-              orderNumberRestrictions.endsWith('-')
-            ) {
-              setFormatError('Dash cannot be at the start or end.')
-              return
-            }
-            try {
-              await updateFormat({
-                variables: {
-                  data: {
-                    userId: user?.id!,
-                    format: orderNumberRestrictions,
-                  },
-                },
-              })
-              setFormatError(null)
-              toast.success('Order number format updated successfully!')
-              close() // optionally close the modal
-            } catch (error) {
-              setFormatError('Failed to update format. Please try again.')
-            }
-          }}
+          disabled={orderNumberRestrictions.length === 0}
+          onClick={handleUpdate}
         >
           Update
         </Button>
